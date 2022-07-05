@@ -2,6 +2,7 @@
     sphinx-quickstart on Fri Nov 19 16:13:20 2021.
     You can adapt this file completely to your liking, but it should at least
     contain the root `toctree` directive.
+    
 
 Programmation dynamique
 =======================
@@ -10,9 +11,17 @@ Programmation dynamique
     :maxdepth: 2
     :caption: Table des matières
 
-    introduction.md
-    chapitre-01.md
-    chapitre-02.md
+    introduction.rst
+    01-fibonacci-memoisation.rst
+
+..  only:: html
+
+    ..  toctree::
+        :maxdepth: 2
+        :caption: Table des matières
+
+        plan.rst
+        
 
 ..
     ..  toctree::

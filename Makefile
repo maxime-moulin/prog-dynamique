@@ -25,7 +25,13 @@ help:
 
 livehtml:
 	sphinx-autobuild "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
-	
+
+
+livepdf:
+	watchmedo shell-command \
+		--patterns="*.png;*.rst;*.md;conf.py" \
+		--recursive \
+		--command='make tmpdf && make getpdf'	
 surge:
 	surge build/html/ ini-prog.surge.sh
 

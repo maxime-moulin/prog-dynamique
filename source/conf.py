@@ -37,7 +37,11 @@ extensions = [
     "myst_parser",
     'sphinx_copybutton',
     'sphinx_design',
+    'sphinxcontrib.spelling',
 ]
+
+# spelling_lang='en_US'
+spelling_lang='fr_FR'
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
