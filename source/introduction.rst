@@ -53,21 +53,32 @@ complexité est :math:`\Theta(2^n)` si :math:`n` est la taille de l'entrée. C'e
 par exemple le cas si l'on calcule le :math:`n`-ième terme de la suite de
 Fibonacci de manière récursive.
 
+Pour rappel, le :math:`n`-ième terme de la suite de Fibonacci est défini
+récursivement comme suit:
+
+..  math:: 
+
+    F(n) = \begin{cases}
+    0 &\text{si $n = 0$} \\
+    1 &\text{si $n = 1$} \\
+    F(n-2) + F(n-1) &\text{sinon}
+    \end{cases}
+
 Le programme ci-dessous lance la fonction ``fib(n)`` pour :math:`n=5, 10, 20,
 30, 40, 50` et chronomètre le temps d'exécution de l'appel.
 
-..  literalinclude:: scripts/fib-timeit.py
+..  literalinclude:: scripts/fib_timeit.py
     :linenos:
 
 L'exécution de ce programme produit la sortie suivante:
 
 ::
 
-    fib(5) exécuté en 0.001 ms
-    fib(10) exécuté en 0.011 ms
-    fib(20) exécuté en 1.086 ms
-    fib(30) exécuté en 136.887 ms
-    fib(40) exécuté en 18934.32 ms
+    fib(5) -> 8, exécuté en 0.002 ms
+    fib(10) -> 89, exécuté en 0.011 ms
+    fib(20) -> 10946, exécuté en 1.121 ms
+    fib(30) -> 1346269, exécuté en 132.518 ms
+    fib(40) -> 165580141, exécuté en 16060.584 ms
 
 On voit bien que l'algorithme n'est pas efficace, même pour des valeurs
 relativement petites de :math:`n`. L'exécution de l'appel pour :math:`n=50` est
@@ -77,10 +88,11 @@ pièces de monnaies ou du sac à dos présentent une structure permettant une
 résolution par décomposition, qui est toutefois inefficace si l'on procède de
 manière naïve.
 
-La section explique pourquoi cet algorithme récursif est tellement inefficace et
-comment utiliser la **mémoïsation**, une technique fondamentale à la
-programmation dynamique, pour rendre une telle stratégie beaucoup plus efficace,
-en évitant de refaire plusieurs fois des calculs déjà effectués au préalable.
+La section :ref:`fibonacci-memoisation` explique pourquoi cet algorithme
+récursif est tellement inefficace et comment utiliser la **mémoïsation**, une
+technique fondamentale en programmation dynamique, pour rendre une telle
+stratégie beaucoup plus efficace, en évitant de refaire plusieurs fois des
+calculs déjà effectués au préalable.
 
 La programmation dynamique sera ensuite appliquée à la résolution de plusieurs
 problèmes simples qui permettront de dégager les traits généraux
