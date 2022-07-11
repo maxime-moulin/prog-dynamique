@@ -9,7 +9,7 @@ sous-problèmes pour résoudre le problème initial.
 
 ..  only:: html
 
-    ..  admonition:: Dessiner les arbres d'appels récursifs
+    ..  danger:: Dessiner les arbres d'appels récursifs
         :class: info
 
         *   Voici un package cool qui permettra de dessiner les arbres d'appels
@@ -22,6 +22,23 @@ sous-problèmes pour résoudre le problème initial.
         *   Paraît pas mal non plus pour dessiner des graphes et des arbres :
             https://js.cytoscape.org/. C'est probablement la meilleure que j'ai
             trouvé.
+
+..  warning::
+
+    Ce chapitre illustre les principes fondamentaux sous-jacents à la
+    programmation dynamique à travers l'exemple du calcul des nombres de
+    Fibonacci, car cet exemple est largement connu et très facile à résoudre.
+
+    Il faut savoir toutefois que cet exemple n'est pas un problème que l'on
+    résout typiquement avec la programmation dynamique. En d'autres termes, il
+    existe de meilleures méthodes pour calculer les nombres de Fibonacci que
+    celles développées dans la suite. L'avantage des nombres de Fibonacci est de
+    pouvoir se concentrer sur les propriétés et les concepts propres à la
+    programmation dynamique avec un problème familier.
+
+    Une fois ces principes présentés, nous les appliquerons à des problèmes plus
+    intéressants tels que le problème du sac à dos.
+    
 
 Pour rappel, l'algorithme récursif de calcul du :math:`n`-ième nombre de
 Fibonacci s'écrit de la manière suivante en Python:
@@ -112,6 +129,18 @@ travail nécessaire en fonction de la taille de l'entrée.
 
 Complexité temporelle
 ---------------------
+
+..  danger::
+
+    On peut aussi calculer la complexité avec la master theorem ... je ne sais
+    pas si la version vue en cours est suffisante
+
+    ..  math::
+
+        T(n) = 2\cdot T(n-1) + 1 \Rightarrow \Theta(2^n)
+
+    Attention ... ceci n'est pas vraiment le master theorem ... il faudra
+    refaire un check ...    
 
 Chaque appel récursif de l'algorithme ``fib(n)`` effectue les mêmes étapes. On
 peut donc ramener l'étude de sa complexité au nombre d'appels récursifs
@@ -366,3 +395,16 @@ Heureusement, il existe aussi une autre approche de la programmation dynamique
 qui se débarrasse de la récursion. Dans la section suivante, nous allons
 présenter cette approche, en utilisant toujours l'exemple du calcul des termes
 de la suite de Fibonacci.
+
+Dépendances et tri topologique
+==============================
+
+..  danger:: 
+
+    Rajouter une explication sur les dépendances et le fait et les DAG et le
+    lien avec le tri topologique.
+
+    Il faut que le graphe des dépendances soit un DAG (Graphe orienté
+    acyclique), sans quoi il n'est pas possible de résoudre le problème tel que
+    avec la programmation dynamique et il est nécessaire de le modifier pour y
+    parvenir.

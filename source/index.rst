@@ -14,6 +14,9 @@ Programmation dynamique
     introduction.rst
     01-fibonacci-memoisation.rst
     02-fibonacci-tabulation.rst
+    knapsack-dp.rst
+
+    references.rst
 
 ..  only:: html
 

@@ -5,14 +5,14 @@ Introduction
 
 ..  only:: html
 
-    ..  admonition:: warning
+    ..  danger::
 
         * installer l'extension https://sphinxcontrib-spelling.readthedocs.io/en/latest/install.html pour vérifier l'orthographe.
 
 Ce tutoriel présente le programmation dynamique, qui est une stratégie générale
 de résolution de problèmes du type "diviser pour régner". Elle est souvent
-utilisée pour résoudre de manière exacte des problèmes d'optimisation
-combinatoires tels que le problème du sac à dos. 
+utilisée pour résoudre de manière exacte des problèmes d'optimisation tels que
+le problème du sac à dos.
 
 ..  tip::
 
@@ -21,11 +21,11 @@ combinatoires tels que le problème du sac à dos.
     appliquer une recette de cuisine toute faite, sans trop réfléchir à son
     fonctionnement. 
 
-    Ce travail a pour objectif de présenter la programmation dynamique de
-    manière compréhensible et progressive, pour que le lecteur puisse en
-    comprendre les rouages et pour qu'il soit capable d'identifier les problèmes
-    susceptibles d'être résolus par cette stratégie et de la mettre en œuvre
-    concrètement dans différents contextes.
+    Ce travail a pour objectif de présenter les principes de la programmation
+    dynamique de manière compréhensible et progressive, pour que le lecteur
+    puisse en comprendre les rouages et pour qu'il soit capable d'identifier les
+    problèmes susceptibles d'être résolus par cette stratégie et de la mettre en
+    œuvre concrètement dans différents contextes nouveaux.
 
 Stratégie de diviser pour régner
 ================================
@@ -41,6 +41,12 @@ De manière générale, cette stratégie procède de la manière suivante:
 * Continuer à décomposer les sous-problèmes en sous-sous-problèmes, jusqu'à ce que le problème soit trivial à résoudre
 * Combiner les solutions des sous-problèmes pour résoudre le problème initial.
 
+..  danger:: 
+
+    Il faudrait ici restreindre les exemples à des cas qui sont typiquement
+    résolus avec la programmation dynamique. On pourrait par exemple évoquer
+    Bellman-Ford pour la recherche du plus court chemin.
+
 Les algorithmes suivants, fort connus, utilisent par exemple cette stratégie:
 
 * Le tri rapide
@@ -54,7 +60,7 @@ par exemple le cas si l'on calcule le :math:`n`-ième terme de la suite de
 Fibonacci de manière récursive.
 
 Pour rappel, le :math:`n`-ième terme de la suite de Fibonacci est défini
-récursivement comme suit:
+récursivement comme suit pour :math:`n \in \mathbb{N}`:
 
 ..  math:: 
 

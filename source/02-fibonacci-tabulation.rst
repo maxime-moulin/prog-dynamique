@@ -47,7 +47,7 @@ est à la ligne 2.
 
 On peut encore améliorer la performance de ce dernier algorithme en tenant
 compte du fait que, pour calculer :math:`F(n)`, il suffit de connaître
-:math:`F(n-1)` et :math:`F(n-1)` et qu'il n'est pas nécessaire de se souvenir de
+:math:`F(n-1)` et :math:`F(n-2)` et qu'il n'est pas nécessaire de se souvenir de
 tous les résultats intermédiaires précédents. On peut réaliser très facilement
 en prenant un tableau de 3 éléments qui va, en tout temps, stocker les résultats
 pour le rang :math:`n`, :math:`n-1` et :math:`n-2`. On utilise pour ce faire un
@@ -57,5 +57,16 @@ type personnalisé de cache LRU basé sur un tableau de longueur 3 parcouru modu
 ..  literalinclude:: scripts/fib_tabulation.py
     :caption:
     :linenos:
-    :emphasize-lines: 2, 5-7
+    :emphasize-lines: 2
     :pyobject: fib_table_lru
+
+
+L'implémentation du cache LRU est dans ce cas très simple puisque les clés sont
+des nombres entiers. Elle consiste essentiellement à accéder aux indices modulo
+la taille du cache, ce qui a pour effet de faire une rotation dans le tableau
+``self.cache`` à mesure que l'indice croît.
+
+..  literalinclude:: scripts/dp.py
+    :caption:
+    :linenos:
+    :pyobject: ArrayLRUCache
