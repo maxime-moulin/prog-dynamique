@@ -41,6 +41,8 @@ print(f"Contrainte respectée? : {constraint_max_volume(X_unfeasible, V, C)}")
 print(f"Valeur nutritive emportée : {f(X_unfeasible, N)}")
 
 
+
+
 def knapsack(N, V, C):
     @vs(
         show_return_value=True,

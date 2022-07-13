@@ -3,9 +3,7 @@ def knapsack(profits, weights, capacity):
     memo = [[None for _ in range(capacity + 1)] for _ in range(N + 1)]
     # initialisation du tableau de mémoïsation
     for c in range(capacity + 1):
-        memo[4][c] = 0
-    for k in range(N + 1):
-        memo[k][0] = 0
+        memo[N][c] = 0
 
      # on parcourt dans l'ordre décroissant de k
     for k in range(N - 1, -1, -1):

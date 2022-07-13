@@ -604,6 +604,8 @@ bidimensionnel ``memo[k][c]``.
     :pyobject: knapsack
     :emphasize-lines: 3, 6-7, 19
 
+..
+
 ..  admonition:: Commentaires concernant le code
 
     * Ligne 3 : on crée un tableau bidimensionnel de :math:`N+1` lignes (une
@@ -698,8 +700,8 @@ l'ordre
 On constate que la dernière valeur calculée est le problème original ``solve(50,
 0)``, ce qui est une bonne nouvelle.
 
-Étape 5 : approche itérative ascendante
----------------------------------------
+Étape 5 : De la version récursive à la version itérative
+--------------------------------------------------------
 
 Pour éviter les pénalités de performance et les limitations dues à la récursion,
 on peut également résoudre le problème de manière itérative. Il faut pour cela
@@ -710,5 +712,183 @@ entrées de la table de mémoïsation ``memo[k][c]`` en respectant l'ordre des
 dépendances, à savoir en diminuant la valeur de ``k`` et en augmentant la valeur
 de ``c``.
 
+
+..  only:: html
+
+    ..
+        ..  figure:: figures/recursion-to-tabulation.gif
+            :align: center
+            :width: 100%
+
+    ..  margin::
+
+        ..  admonition:: Étapes pour passer de la récursion à la méthode ascendante "tabulaire"
+
+            Les étapes ci-dessous se rapportent à la figure
+            :ref:`easy-steps-recursion-to-tabulation`.
+
+            1. Préremplir la table de mémoïsation avec les "cas de base" de la
+            récursion.
+
+            2. Consulter la table de mémoïsation au lieu de faire des appels récursifs.
+            En l'occurrence, utiliser ``memo[k][c]`` au lieu de faire un appel
+            récursif ``solve(c, k)``.
+
+            3. Parcourir itérativement la table de mémoïsation dans le "bon ordre" au
+            lieu de faire des appels récursifs. Le "bon ordre" est déterminé par un
+            tri topologique de l'inverse du graphe des sous-problèmes résultant de
+            l'arbre des appels récursifs.
+
+            4. Le reste peut en principe être transposé tel quel de la version récursive
+            à la version itérative.  
+..
+    ..  only:: html
+
+        ..  _easy-steps-recursion-to-tabulation:
+
+        ..  figure:: figures/recursion-to-tabulation.png
+            :align: center
+            :width: 100%
+
+            Étapes pour passer de la version récursive descendante à la version
+            itérative ascendante
+
+..  only:: latex
+
+    ..  admonition:: Étapes pour passer de la récursion à la méthode ascendante "tabulaire"
+
+        Les étapes ci-dessous se rapportent à la figure
+        :ref:`easy-steps-recursion-to-tabulation`.
+
+        1. Préremplir la table de mémoïsation avec les "cas de base" de la
+        récursion.
+
+        2. Consulter la table de mémoïsation au lieu de faire des appels récursifs.
+        En l'occurrence, utiliser ``memo[k][c]`` au lieu de faire un appel
+        récursif ``solve(c, k)``.
+
+        3. Parcourir itérativement la table de mémoïsation dans le "bon ordre" au
+        lieu de faire des appels récursifs. Le "bon ordre" est déterminé par un
+        tri topologique de l'inverse du graphe des sous-problèmes résultant de
+        l'arbre des appels récursifs.
+
+        4. Le reste peut en principe être transposé tel quel de la version récursive
+        à la version itérative.  
+
+
+..  _easy-steps-recursion-to-tabulation:
+
+..  figure:: figures/recursion-to-tabulation-vertical.png
+    :align: center
+    :width: 100%
+
+    Étapes pour passer de la version récursive descendante à la version
+    itérative ascendante
+
+
 ..  literalinclude:: scripts/knapsack_tabular.py
     :caption:
+    :linenos:
+
+On constate qu'après cette transformation, le programme livre toujours le bon
+résultat:
+
+..  code-block:: txt
+
+    Valeur optimale: 9700
+
+Test du programme sur d'autres instances
+========================================
+
+Pour tester les performance et l'exactitude de l'algorithme, on peut utiliser
+des instances de tests de différentes tailles disponibles sur le Web. Pour les
+premiers tests, les instances de test :cite:p:`johnyortega:test-instances` étant
+donné que les valeurs optimales sont indiquées.
+
+Petites instances
+-----------------
+
+Le tableau :ref:`knapsack-test-small-instances` montre les résultats obtenus
+pour les petites instances mentionnées dans la section "Low-dimensional 0/1
+knapsack problems".
+
+..  _knapsack-test-small-instances:
+
+..  csv-table:: Instances testées sur l'algorithme récursif mémoïsé et sur l'algorithme itératif
+    :header-rows: 1
+
+    "Nom de l'instance", "Optimum correct", Optimum trouvé, Temps (récursion), Temps (itératif)
+    ``f1_l-d_kp_10_269``, 295, 295 , ":math:`0.2198\,\textrm{ms}`", ":math:`0.5875\,\textrm{ms}`"
+    ``f2_l-d_kp_20_878``, 1024, 1024 , ":math:`2.9633\,\textrm{ms}`", ":math:`4.0302\,\textrm{ms}`"
+    ``f3_l-d_kp_4_20``, 35, 35 , ":math:`0.0122\,\textrm{ms}`", ":math:`0.0231\,\textrm{ms}`"
+    ``f4_l-d_kp_4_11``, 23, 23 , ":math:`0.0093\,\textrm{ms}`", ":math:`0.0169\,\textrm{ms}`"
+    ``f6_l-d_kp_10_60``, 52, 52 , ":math:`0.0877\,\textrm{ms}`", ":math:`0.1328\,\textrm{ms}`"
+    ``f7_l-d_kp_7_50``, 107, 107 , ":math:`0.0558\,\textrm{ms}`", ":math:`0.0787\,\textrm{ms}`"
+    ``f8_l-d_kp_23_10000``, 9767, 9767 , ":math:`8.7740\,\textrm{ms}`", ":math:`58.0101\,\textrm{ms}`"
+    ``f9_l-d_kp_5_80``, 130, 130 , ":math:`0.0265\,\textrm{ms}`", ":math:`0.0958\,\textrm{ms}`"
+    ``f10_l-d_kp_20_879``, 1025, 1025 , ":math:`5.7342\,\textrm{ms}`", ":math:`4.0514\,\textrm{ms}`"
+    
+..  admonition:: Discussion des résultats
+
+    Aussi bien la version récursive que la version itérative trouvent le profit
+    maximal dans tous les cas.
+    
+    Contrairement aux idées reçues l'algorithme récursif est la plupart du temps
+    plus rapide que l'algorithme itératif par tabulation, malgré le *overhead*
+    dû aux appels récursifs. Cela vient du fait que la version récursive fait
+    moins de travail inutile. En effet, la version itérative qui construit la
+    solution petit à petit doit écrire dans ``memo[k][c]`` pour tout :math:`0
+    \leq k \leq N` et pour tout :math:`0 \leq c \leq C`, ce qui fait
+    :math:`(N+1)\cdot (C+1)` écritures, alors que la récursion ne fait que les
+    appels strictement nécessaires.
+
+    La version itérative est de ce fait particulièrement pénalisée dans le cas
+    de l'instance ``f8_l-d_kp_23_10000`` où la capacité :math:`C = 10000` du sac
+    à dos est très importante.
+
+Instances plus importantes
+--------------------------
+
+Le tableau Voici les tests des deux algorithmes sur des instances notées dans la catégorie
+"Large scale"
+
+.. _knapsack-test-large-instances:
+
+..  csv-table:: Test sur de grosses instances de l'algorithme récursif mémoïsé et de l'algorithme itératif
+    :header-rows: 1
+
+    "Nom de l'instance", ":math:`N`", ":math:`C`", "Optimum", "Temps (récursion)", "Temps (itératif)"
+    "``knapPI_1_100_1000_1``", "100", "995", "9147", ":math:`27\,\textrm{ms}`", ":math:`19\,\textrm{ms}`"
+    "``knapPI_1_200_1000_1``", "200", "1008", "11238", ":math:`59\,\textrm{ms}`", ":math:`40\,\textrm{ms}`"
+    "``knapPI_1_500_1000_1``", "500", "2543", "28857", ":math:`462\,\textrm{ms}`", ":math:`283\,\textrm{ms}`"
+    "``knapPI_1_1000_1000_1``", "1000", "5002", "54503", "``RecursionError``", ":math:`1203\,\textrm{ms}`"
+    "``knapPI_1_2000_1000_1``", "2000", "10011", "110625", "``RecursionError``", ":math:`4887\,\textrm{ms}`"
+    "``knapPI_1_5000_1000_1``", "5000", "25016", "276457", "``RecursionError``", ":math:`31604\,\textrm{ms}`"
+    "``knapPI_1_10000_1000_1``", "10000", "49877", "563647", "``RecursionError``", ":math:`154955\,\textrm{ms}`"
+..
+
+..  admonition:: Discussion des résultats
+
+    Sur de plus grosses instances, on constate qu'il y a un avantage à procéder
+    de manière récursive. En effet, certaines instances sont hors de portée de
+    la version récursive qui se heurte à la limite de profondeur des appels
+    récursifs.
+    
+    De plus, l'approche itérative semble plus rapide sur de plus grosses
+    instances. 
+
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+

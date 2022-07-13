@@ -5,7 +5,7 @@ def knapsack(profits, weights, capacity):
     def solve(capacity, k):
         if memo[k][capacity] is not None:
             return memo[k][capacity]
-        if k >= len(profits):
+        if k >= N:
             return 0
 
         profit_without = solve(capacity, k + 1)
