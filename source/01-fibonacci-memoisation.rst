@@ -274,7 +274,7 @@ donné lieu à l'arbre de la figure :ref:`fib-tree-6`.
     :align: center
     :width: 90%
 
-    Arbre des appels récursifs lors de l'appel ``fib_memo1(6)``
+    Arbre des appels récursifs lors de l'appel ``fib(6)``
 
 
 Analyse de complexité de la récursion avec la mémoïsation
@@ -396,15 +396,74 @@ qui se débarrasse de la récursion. Dans la section suivante, nous allons
 présenter cette approche, en utilisant toujours l'exemple du calcul des termes
 de la suite de Fibonacci.
 
-Dépendances et tri topologique
-==============================
+Dépendances et tri topologique inverse
+======================================
 
-..  danger:: 
+Pour pouvoir être résolu par programmation dynamique, il faut que le **graphe de
+dépendances** des calculs soit acyclique. Il n'y a aucun problème avec le calcul
+des nombres de Fibonacci puisque que le calcul de :math:`F(n)` n'est dépendant
+que du calcul de :math:`F(n-1)` et :math:`F(n-2)`, comme le montre le graphe de
+la figure :ref:`fig-dep-graph-Fn` dépendances pour le calcul de :math:`F(5)`
 
-    Rajouter une explication sur les dépendances et le fait et les DAG et le
-    lien avec le tri topologique.
+..  _fig-dep-graph-Fn:
 
-    Il faut que le graphe des dépendances soit un DAG (Graphe orienté
-    acyclique), sans quoi il n'est pas possible de résoudre le problème tel que
-    avec la programmation dynamique et il est nécessaire de le modifier pour y
-    parvenir.
+..  graphviz::
+    :caption: Graphe de dépendances du calcul de :math:`F(5)`
+
+     digraph example {
+         rankdir=LR;
+         rank=same;
+         a [label="F(5)"];
+         b [label="F(4)"];
+         c [label="F(3)"];
+         d [label="F(2)"];
+         e [label="F(1)"];
+         f [label="F(0)"];
+         a -> b;
+         a -> c [constraint=false];
+         b -> c;
+         b -> d [constraint=false];
+         c -> d;
+         c -> e [constraint=false];
+         d -> e;
+         d -> f;
+     }
+
+..  _defn:dependency-graph:
+
+..  admonition:: Définition (Graphe de dépendances)
+
+    Dans le graphe de dépendances est un graphe orienté :math:`G(V, E)` dont les
+    nœuds :math:`v \in V` représentent les calculs à effectuer, à savoir les appels
+    récursifs à faire. Le graphe contient une arête :math:`(u, v) \in E` si et
+    seulement si le calcul de :math:`u` dépend du calcul de :math:`v`.
+
+..  _prop:condition-necessaire-graphe-dependances-dag:
+
+..  admonition:: Proposition (Condition nécessaire pour la programmation dynamique)
+
+    Pour qu'un problème puisse être résolu par programmation dynamique, il faut
+    que le graphe de dépendance sous-jacent soit acyclique.
+
+En effet, si le graphe de dépendances est cyclique, la récursion va
+immanquablement conduire à un algorithme qui tourne en boucle infinie (récursion
+infinie indirecte).
+
+..  admonition:: Proposition (Ordre d'évaluation des appels récursifs)
+
+    Si le graphe de dépendances est un DAG (*directed acyclic graph* = graphe
+    orienté acyclique), l'ordre d'évaluation des appels récursifs correspond à
+    un "tri topologique inverse" du graphe de dépendances, à savoir à un tri
+    topologique de graphe de dépendances inversé.
+
+
+..
+    ..  danger:: 
+
+        Rajouter une explication sur les dépendances et le fait et les DAG et le
+        lien avec le tri topologique.
+
+        Il faut que le graphe des dépendances soit un DAG (Graphe orienté
+        acyclique), sans quoi il n'est pas possible de résoudre le problème tel que
+        avec la programmation dynamique et il est nécessaire de le modifier pour y
+        parvenir.

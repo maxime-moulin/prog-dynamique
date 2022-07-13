@@ -36,11 +36,15 @@ release = infos.release
 # ones.
 extensions = [
     "sphinxcontrib.youtube",
+    "sphinxcontrib.pseudocode",
     "myst_parser",
     "sphinx_copybutton",
     "sphinx_design",
     "sphinxcontrib.spelling",
     "sphinxcontrib.bibtex",
+    "sphinx.ext.graphviz",
+    "sphinx_proof"
+    
 ]
 
 # BibTeX 

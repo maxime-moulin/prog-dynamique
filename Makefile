@@ -55,3 +55,6 @@ tmpdf:
 
 getpdf:
 	cp -f build/latex/$(TARGET).pdf .
+
+surge: html
+	surge build/html gyminf-ads2-dp.surge.sh

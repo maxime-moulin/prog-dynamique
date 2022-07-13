@@ -130,3 +130,9 @@ dmypy.json
 
 # PDF files
 *.pdf
+
+# images in scripts director
+source/scripts/*.gif
+source/scripts/*.png
+./*.gif
+./*.png
