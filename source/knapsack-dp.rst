@@ -1,4 +1,4 @@
-    .. _knapsack-dp.rst:
+.. _knapsack-dp.rst:
 
 Le problème du sac à dos
 ########################

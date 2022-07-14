@@ -170,7 +170,7 @@ de résolution de problèmes. À ce titre, il faut absolument maîtriser et
 comprendre parfaitement les mécanismes de la programmation récursive, en
 particulier le modèle d'exécution des fonctions récursives. Un rappel détaillé
 de ce modèle d'exécution est donné dans le chapitre
-:ref:`fibonacci-memoisation`. 
+:ref:`fibonacci`. 
 
 D'autre part, il ne faut pas s'arrêter ni s'intéresser à l'implémentation d'un
 algorithme de programmation dynamique pour un problème particulier, mais tenter
@@ -184,12 +184,6 @@ En définitive, comme le dit le prof. Erik Demaine à ses étudiants du MIT
 :cite:p:`mitocw:6.006:website, mitocw:6.006:lecture-19`, la programmation
 dynamique est facile une fois qu'on en a compris les rouages.
 
-..  only:: html
-
-    .. rubric:: Notes de bas page
-
-..  [#f1] Nous présenterons ultérieurement cette notion importante de la
-    programmation dynamique 
 
 Pour faciliter la compréhension du sujet, ce rapport par du calcul récursif des
 nombres de Fibonacci dans le chapitre :ref:`fibonacci` et explique pourquoi cet
@@ -198,6 +192,6 @@ des fonctions récursives. Il présente également les outils de base de la
 programmation dynamique pour améliorer la situation à l'aide de la mémoïsation
 et l'approche duale ascendante (bottom-up) qui construit la solution
 itérativement. Ces principes sont ensuite utilisés dans le chapitre
-:ref:`knapsack-dp` pour développer un algorithme de programmation dynamique
+:ref:`knapsack-dp.rst` pour développer un algorithme de programmation dynamique
 résolvent des instances et petite moyenne taille du sac à dos.
 
