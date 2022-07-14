@@ -1,4 +1,4 @@
-from itertools import combinations, product
+from itertools import product
 
 # Données de l'instance
 N = [4500, 2600, 2600, 2600]

@@ -9,10 +9,10 @@ peut être formulé de très nombreuses manières et il existe de nombreuses
 variantes du problème. Cette section présente la variante la plus simple et
 classique, le **0-1 Knapsack Problem**. Comme ce problème est NP-complet, on ne
 connaît pas d'algorithme efficace pour résoudre de manière exactes de grosses
-instances du problème. Il existe de très nombreuses approches possibles pour ce
-problème. Parmi les approches exactes, il y a notamment la programmation
-dynamique et la programmation en nombres entiers (0-1 Integer Programming) qui
-sont capables de résoudre de petites instances du problème. Pour résoudre les
+instances du problème. Il existe de très nombreuses approches possibles. Parmi
+les approches exactes, il y a notamment la programmation dynamique et la
+programmation en nombres entiers (0-1 Integer Programming) qui sont capables de
+résoudre de petites et moyennes instances du problème. Pour résoudre les
 instances plus grandes, il faut recourir à des méthodes par approximation que
 nous n'aborderons pas ici.
 
@@ -36,13 +36,15 @@ Présentation intuitive
             \marginnote{salut}
             \qrcode[hyperlink,height=0.5in]{https://www.youtube.com/watch?v=HvAK6HxZ190}
 
-La vidéo :cite:p:`parent:intro-sac-à-dos` présente le problème de manière
-accessible à des étudiants du niveau gymnase. 
+..  admonition:: Astuce didactique
+
+    La vidéo :cite:p:`parent:intro-sac-à-dos` présente le problème de manière
+    accessible à des étudiants du niveau gymnase. 
 
 Supposons que l'on prépare une longue randonnée qui exclut de pouvoir se
 ravitailler en route et que l'on dispose d'un sac à dos de contenance limitée
 (par exemple 50 litres), quels articles alimentaires faut-il y placer pour
-maximiser la valeur nutritive emportée. Les articles considérés sont mentionnés
+maximiser la valeur nutritive emportée? Les articles considérés sont mentionnés
 dans le tableau :ref:`table-knapsack-items-example-1`.
 
 
@@ -77,12 +79,12 @@ dans le tableau :ref:`table-knapsack-items-example-1`.
 
     Pour résoudre le problème, il faut prendre en compte les remarques suivantes:
 
-    *   Pour optimiser les calculs et pour faciliter l'analyse de l'algorithme,
-        on impose que tous les volumes et la capacité du sac soient des nombres
-        entiers. Si, dans la vraie vie, les nombres ne sont pas entiers, on peut
-        toujours transformer le problème en multipliant tous les volumes et la
-        capacité par un facteur commun pour que les volumes et la capacité du
-        sac à dos soient des nombres entiers.
+    *   Pour pouvoir utiliser la programmation dynamique, on impose que tous les
+        volumes et la capacité du sac soient des nombres entiers. Si, dans la
+        vraie vie, les nombres ne sont pas entiers, on peut toujours transformer
+        le problème en multipliant tous les volumes et la capacité par un
+        facteur commun pour que les volumes et la capacité du sac à dos soient
+        des nombres entiers.
 
     *   Chaque paquet de pâtes constitue un article à part entière et est donc
         noté dans une ligne à part entière dans le tableau.
@@ -96,8 +98,27 @@ dans le tableau :ref:`table-knapsack-items-example-1`.
         le prend pas du tout, d'où le nom du problème **0-1**-Knapsack Problem.
 
     *   On aurait pu remplacer les volumes en [l] par des poids en [kg] et
-        mettre une contrainte de poids maximal de 50kg au le sac à dos au lieu
+        mettre une contrainte de poids maximal de 50 kg au le sac à dos au lieu
         des 50 litres de contenance.
+
+Applications
+------------
+
+Le problème du sac à dos possède de nombreuses applications pratiques. On peut
+notamment citer le problème d'allocation d'actifs en finance. Dans ce contexte,
+on a une somme à investir, qui correspond à la capacité maximale du sac à dos et
+des projets ou investissements qui demandent tous une certaine partie du capital
+à investir et une "promesse" de retour sur investissement. Comme il y a souvent
+plus de projet à financer que d'actifs disponibles, on peut déterminer les
+projets à financer en priorité en résolvant un problème du sac à dos. Le
+problème revêt aussi une grande importance dans le domaine de la logistique.
+
+Un des premiers protocoles cryptographiques à clé publique était basé sur la
+résolution d'un problème du sac à dos.
+
+Le problème revêt également une certaine importance théorique vu qu'il s'agit
+d'un problème NP-complet. Découvrir un algorithme polynomial pour le sac à dos
+reviendrait à résoudre P = NP.
 
 Formulation mathématique
 ------------------------
@@ -112,10 +133,10 @@ d'objets emportés. Les données du problème sont les suivantes:
 
     On peut représenter le problème à l'aide de trois listes 
 
-    - La liste ``V`` chaque élément ``V[i]`` indiquent le volume de l'objet
+    - La liste ``V`` dont chaque élément ``V[i]`` indique le volume de l'objet
       numéro :math:`i`.
 
-    - Liste ``N`` dont chaque élément ``N[i]`` indiquent la valeur nutritive de
+    - Liste ``N`` dont chaque élément ``N[i]`` indique la valeur nutritive de
       l'objet numéro :math:`i`.
 
 ..  admonition:: Variables de décision
@@ -165,7 +186,7 @@ d'objets emportés. Les données du problème sont les suivantes:
 
     ..  math::
 
-        f(X) = f(x_0, \ldots, x_{N_1}) = \sum_{i=0}^{N-1} x_i \cdot N[i]
+        f(X) = f(x_0, \ldots, x_{N-1}) = \sum_{i=0}^{N-1} x_i \cdot N[i]
 
     Pour l'instance considérée en exemple, la fonction objectif est donc
 
@@ -179,7 +200,10 @@ d'objets emportés. Les données du problème sont les suivantes:
 Résoudre le problème du sac à dos consiste à attribuer à chaque variable de
 décision :math:`x_i` une valeur dans :math:`\{0, 1\}` de telle manière que
 toutes les contraintes soient satisfaites. De plus, il faut trouver une solution
-optimale, à savoir une solution qui maximise la fonction objectif :math:`f`.
+optimale, à savoir une solution qui maximise la fonction objectif :math:`f`. La
+programmation dynamique se préoccupe avant tout de trouver le profit maximal et
+détermine les objets à rajouter concrètement dans le sac une fois le problème de
+la valeur optimale connue.
 
 ..
     Représentation du problème en Python
@@ -208,7 +232,7 @@ données figurent dans la table :ref:`table-knapsack-small-instance`.
     2, Paquet de pâtes, 13, 2600, ?
     3, Paquet de pâtes, 13, 2600, ?
 
-On considère de plus que la capacité du sac est de :math:`C = 50\,[l]`.
+On considère de plus que la capacité du sac à dos est de :math:`C = 50\,[l]`.
 
 Comme toujours, on peut commencer par utiliser la force brute sur une petite
 instance pour se familiariser avec le problème et trouver la réponse correcte
@@ -260,10 +284,10 @@ Résolution gloutonne
 ====================
 
 On peut éventuellement espérer résoudre le problème de manière gloutonne, en
-rajoutant les éléments un à un et commençant par insérer ceux qui paraissent le
-plus avantageux, à savoir ceux dont le rapport :math:`\frac{N[i]}{V[i]}` est le
-plus élevé. La tableau ci-dessous est trié dans l'ordre décroissant de la valeur
-heuristique :math:`\frac{N[i]}{V[i]}`.
+rajoutant les éléments un à un et en commençant par insérer ceux qui paraissent
+le plus avantageux, à savoir ceux dont le rapport :math:`\frac{N[i]}{V[i]}` est
+le plus élevé. Le tableau ci-dessous est trié dans l'ordre décroissant de la
+valeur heuristique :math:`\frac{N[i]}{V[i]}`.
 
 ..  _table-knapsack-greed:
 
@@ -277,68 +301,68 @@ heuristique :math:`\frac{N[i]}{V[i]}`.
         Paquet de pâtes, 13, 2600, 200
         Paquet de riz, 24, 4500, 187.5
 
-On voit bien que cette manière de procéder va insérer les trois paquets de pâtes
-qui paraissent les plus avantageux et laisser de côté le paquet de Paquet de riz, pour
-lequel il n'y aura plus de place une fois les trois paquets de place emportés
-dans le sac. En effet, les trois paquets de pâtes occupent un volume de 39
-litres et il n'y a donc plus de place pour le paquet de riz. Par contre, la
-valeur nutritive emportée est de :math:`3\times 2600 = 7800`, ce qui est
-passablement inférieur à la valeur optimale de 9700.
-
-
-Implémentation en Python
-------------------------
-
-Le programme :ref:`greedy_knapsack.py` montre une implémentation en Python de la
-stratégie gloutonne.
-
-..  _greedy_knapsack.py:
-
-..  literalinclude:: scripts/greedy_knapsack.py
-    :caption:
-    
-
-La sortie du programme donne en effet une solution sous-optimale qui prend les
-trois paquets de pâtes mais laisse le paquet de riz.
-
-.. code-block:: txt
-
-    Solution optimale trouvée: X=[1, 1, 1, 0], valeur=7800
-
-
+On voit bien que cette manière de procéder va insérer les trois paquets de
+pâtes, qui paraissent les plus avantageux, et laisser de côté le paquet de
+Paquet de riz, pour lequel il n'y aura plus de place une fois les trois paquets
+de pâtes emportés dans le sac. En effet, les trois paquets de pâtes occupent un
+volume de 39 litres et il n'y a donc plus de place pour le paquet de riz. Par
+contre, la valeur nutritive emportée est de :math:`3\times 2600 = 7800`, ce qui
+est passablement inférieur à la valeur optimale de 9700.
 
 ..
-    ..  pcode::
-        :linenos:
+    Implémentation en Python
+    ------------------------
 
+    Le programme :ref:`greedy_knapsack.py` montre une implémentation en Python de la
+    stratégie gloutonne.
+
+    ..  _greedy_knapsack.py:
+
+    ..  literalinclude:: scripts/greedy_knapsack.py
+        :caption:
+        
+
+    La sortie du programme donne en effet une solution sous-optimale qui prend les
+    trois paquets de pâtes mais laisse le paquet de riz.
+
+    .. code-block:: txt
+
+        Solution optimale trouvée: X=[1, 1, 1, 0], valeur=7800
+
+
+
+    ..
+        ..  pcode::
+            :linenos:
+
+            \begin{algorithm}
+            \caption{Greedy Knapsack}
+            \begin{algorithmic}
+            \PROCEDURE{Greedy-KP}{$V, W, C$}
+                \STATE $W_{tot} \gets 0$
+                \STATE $I \gets \{0 \ldots N-1\}$
+                \STATE $S \gets \{\}$
+                \While{$W_{tot} < C$}
+                    \State $i = \max_{k \in I \setminus S} $
+                \EndWhile
+
+            \ENDPROCEDURE
+            \end{algorithmic}
+            \end{algorithm}
+
+    ..
         \begin{algorithm}
         \caption{Greedy Knapsack}
         \begin{algorithmic}
-        \PROCEDURE{Greedy-KP}{$V, W, C$}
-            \STATE $W_{tot} \gets 0$
-            \STATE $I \gets \{0 \ldots N-1\}$
-            \STATE $S \gets \{\}$
-            \While{$W_{tot} < C$}
-                \State $i = \max_{k \in I \setminus S} $
-            \EndWhile
-
+        \PROCEDURE{Greedy-KP}{$V, $N, $C}
+            IF{$p < r$}
+                \STATE $q = $ \CALL{Partition}{$A, p, r$}
+                \STATE \CALL{Greedy-KP}{$A, p, q - 1$}
+                \STATE \CALL{Greedy-KP}{$A, q + 1, r$}
+            \ENDIF
         \ENDPROCEDURE
         \end{algorithmic}
         \end{algorithm}
-
-..
-    \begin{algorithm}
-    \caption{Greedy Knapsack}
-    \begin{algorithmic}
-    \PROCEDURE{Greedy-KP}{$V, $N, $C}
-        IF{$p < r$}
-            \STATE $q = $ \CALL{Partition}{$A, p, r$}
-            \STATE \CALL{Greedy-KP}{$A, p, q - 1$}
-            \STATE \CALL{Greedy-KP}{$A, q + 1, r$}
-        \ENDIF
-    \ENDPROCEDURE
-    \end{algorithmic}
-    \end{algorithm}
 
 Résolution par programmation dynamique
 ======================================
@@ -354,17 +378,21 @@ une manière classique de résoudre le problème du sac à dos de manière exact
     il faut suivre les étapes suivantes:
 
     #. Définir les sous-problèmes
-    #. Faire des conjectures (guesses) pour déterminer des parties de la
-       solution et déterminer une formule de récurrence
+    #. Vérifier que le problème possède la propriété de sous-structures
+       optimales et de sous-problèmes non disjoints. Trouver une formulation
+       permettant de résoudre le problème connaissant la solution optimale des
+       sous-problèmes directs. Envisager tous les cas possibles comme dans une
+       approche par force brute. Déterminer la formule de récurrence.
     #. Optionnel : vérifier que le graphe de dépendances soit acyclique. Si on
        omet cette étape et que le graphe de dépendances contient un cycle, on ne
        manquera pas de tomber sur une récursion infinie lors de
        l'implémentation.
     #. Implémenter la récurrence sous forme de récursion avec mémoïsation
-    #. Optionnel : résoudre le problème de manière ascendante (bottom-up) avec la
-       "méthode tabulaire" pour éviter la récursion 
-       
+    #. Résoudre le problème de manière ascendante (bottom-up) avec la "méthode
+       tabulaire" pour éviter la récursion.       
     #. Optionnel : optimiser l'algorithme pour économiser de la mémoire
+    #. Optionnel : construire une solution concrète à partir du tableau de
+       programmation dynamique.
 
     Les étapes en question sont données à titre indicatif et constituent un
     guide utile dans la plupart des cas. Parfois, il faut toutefois faire preuve
@@ -419,8 +447,8 @@ peut insérer dans le sac à dos est nulle.
         if len(profits) == 0:
             return 0
 
-Étape 2 : Formuler la récurrence et explorer les possibilités
--------------------------------------------------------------
+Étape 2 : Construire une solution optimale à partir des sous-solutions
+----------------------------------------------------------------------
 
 Ensuite, si le problème n'est pas trivial, il faut réduire sa taille
 récursivement. La réduction du problème se fait en envisageant toutes les
@@ -488,6 +516,7 @@ s'il reste suffisamment de place:
 ..  literalinclude:: scripts/knapsack_step1_ok.py
     :emphasize-lines: 6, 9-10
     :caption:
+    :linenos:
 
 Cette fois-ci, le programme fournit bien la valeur optimale attendue et produit la sortie
 
@@ -505,13 +534,13 @@ et amène deux problèmes importants.
 #.  Cette formulation récursive empêche une bonne mémoïsation. En effet, comme
     le montre l'arbre des appels récursifs de la figure
     :ref:`fig_knapsack_step1_tree`, les listes ``weights`` et ``profits``
-    changent à chaque appel. L'idée de la mémoïsation étant de sauvegarder la
-    valeur de retour de la fonction pour chaque combinaison de paramètre déjà
-    rencontrés, il n'y aucune chance de pouvoir profiter de la mémoïsation si
-    les paramètres ``weights`` et ``profits`` changent à chaque appel, alors
-    qu'en réalité, la seule chose qui change à chaque appel est la capacité
-    restante du sac à dos et le numéro de l'objet que l'on est en train de
-    considérer.
+    changent à chaque appel récursif. L'idée de la mémoïsation étant de
+    sauvegarder la valeur de retour de la fonction pour chaque combinaison de
+    paramètre déjà rencontrés, il n'y aucune chance de pouvoir profiter de la
+    mémoïsation si les paramètres ``weights`` et ``profits`` changent à chaque
+    appel récursif. En réalité, la seule chose qui change à chaque fois est la
+    capacité restante du sac à dos et le numéro de l'objet que l'on est en train
+    de considérer.
 
 #.  Comme les listes ``weights`` et ``profits`` sont copiées à chaque appel, la
     mémoire utilisée par la pile d'appels récursifs explose très rapidement.
@@ -535,6 +564,8 @@ dans le sac à dos à l'aide du paramètre :math:`k` allant de 0 à :math:`N-1`.
 
 ..  literalinclude:: scripts/knapsack_step3.py
     :caption:
+    :linenos:
+    :pyobject: knapsack
 
 Le problème est qu'il faut à présent indiquer le paramètre ``k=0`` lors de
 l'appel de la fonction, ce qui n'est pas très pratique. De plus, la fonction
@@ -548,6 +579,8 @@ montre le code :ref:`code-knapsack-step3-optimize-recursion-better`.
 
 ..  literalinclude:: scripts/knapsack_step3_better.py
     :caption:
+    :linenos:
+    :pyobject: knapsack
 
 À présent, on peut commencer à attaquer la mémoïsation. En effet, l'arbre des
 appels récursifs de la fonction interne ``solve`` présente des appels redondants
@@ -566,11 +599,11 @@ Pour rappel, la mémoïsation consiste à mémoriser la valeur de retour de la
 fonction pour chaque combinaison de paramètres. Dans le cas présent, la fonction
 à mémoïser est la fonction locale ``solve(capacity, k)``. Pour la mémoïsation,
 on peut utiliser une table de hachage dont les clés sont des tuples ``(c, k)``
-où ``c`` est la capacité du sac à dos et ``k`` l'indice de l'élément en cours de
-traitement. On peut également utiliser un tableau bidimensionnel où l'on stocke
-la valeur de retour de l'appel ``solve(c, k)`` à l'adresse ``memo[k][c]``. Nous
-retiendrons la deuxième possibilité qui se rapproche le plus de l'approche
-descendante que nous utiliserons par la suite.
+où ``c`` est la capacité du sac à dos et ``k`` l'indice de l'élément sur lequel
+porte actuellement le choix. On peut également utiliser un tableau
+bidimensionnel où l'on stocke la valeur de retour de l'appel ``solve(c, k)`` à
+l'adresse ``memo[k][c]``. Nous retiendrons la deuxième possibilité qui se
+rapproche le plus de l'approche descendante que nous utiliserons par la suite.
 
 ..  admonition:: Discussion
     :class: hint
@@ -611,7 +644,7 @@ bidimensionnel ``memo[k][c]``.
 
     * Lignes 6-7 : Si la valeur en ``memo[k][c]`` n'est pas ``None``, c'est que
       la fonction a déjà été appelée avec les paramètres ``(c, k)`` au
-      préalable. Dans ce cas, on retourne simplement la valeur stockée hau lieu
+      préalable. Dans ce cas, on retourne simplement la valeur stockée au lieu
       de refaire le calcul.
 
     * Ligne 19 : Avant de retourner la valeur optimale pour le problème ``(c,
@@ -636,9 +669,9 @@ beaucoup plus réduit, car tous les sous-arbres redondants ont été élagués.
 
 Fondamentalement, le graphe de dépendances pour le calcul de ``solve(c, k)``
 correspond à l'arbre des appels récursifs dont tous les nœuds correspondant au
-même couple de paramètres ``(c, k)`` sont réduits à un seul nœud dans le graphe
-de dépendances. Il est important d'établir un tri topologique du graphe de
-sous-problèmes inversé pour savoir comment construire la solution de manière
+même couple de paramètres ``(c, k)`` sont réduits à un seul sommet dans le
+graphe de dépendances. Il est important d'établir un tri topologique du graphe
+de dépendances inversé pour savoir comment construire la solution de manière
 itérative avec la méthode tabulaire et se débarrasser de la récursion.
 
 ..  _knapsack-subproblems-graph:
@@ -682,9 +715,9 @@ En observant le graphe de dépendances inversé de la figure
 réaliser un tri topologique en notant les sommets du graphe dans l'ordre
 décroissant de :math:`k` et dans l'ordre croissant de la capacité :math:`C`.
 Cela vient du fait que, lors des appels récursifs, on ne fait qu'augmenter
-:math:`k` à mesure qu'on descend dans l'arbre de dépendances et on ne fait que
-diminuer la capacité restante dans le sac à dos. Si on trie les sommets par
-ordre décroissant de :math:`k` et par ordre croissant des capacités, on obtient
+:math:`k` et diminuer la capacité restante dans le sac à dos à mesure qu'on
+descend dans l'arbre des appels récursifs. Si on trie les sommets par ordre
+décroissant de :math:`k` et par ordre croissant des capacités, on obtient
 l'ordre 
 
 ..  code-block:: txt
@@ -798,8 +831,8 @@ Test du programme sur d'autres instances
 
 Pour tester les performance et l'exactitude de l'algorithme, on peut utiliser
 des instances de tests de différentes tailles disponibles sur le Web. Pour les
-premiers tests, les instances de test :cite:p:`johnyortega:test-instances` étant
-donné que les valeurs optimales sont indiquées.
+premiers tests, les instances de test :cite:p:`johnyortega:test-instances` sont
+utilisées étant donné que les valeurs optimales sont indiquées.
 
 Petites instances
 -----------------
@@ -826,8 +859,8 @@ knapsack problems".
     
 ..  admonition:: Discussion des résultats
 
-    Aussi bien la version récursive que la version itérative trouvent le profit
-    maximal dans tous les cas.
+    La version récursive et la version itérative calculent le profit maximal
+    correctement.
     
     Contrairement aux idées reçues l'algorithme récursif est la plupart du temps
     plus rapide que l'algorithme itératif par tabulation, malgré le *overhead*
@@ -845,8 +878,8 @@ knapsack problems".
 Instances plus importantes
 --------------------------
 
-Le tableau Voici les tests des deux algorithmes sur des instances notées dans la catégorie
-"Large scale"
+Le tableau :ref:`knapsack-test-large-instances` présente les résultats des tests
+des deux algorithmes sur des instances notées dans la catégorie "Large scale"
 
 .. _knapsack-test-large-instances:
 
@@ -866,7 +899,7 @@ Le tableau Voici les tests des deux algorithmes sur des instances notées dans l
 ..  admonition:: Discussion des résultats
 
     Sur de plus grosses instances, on constate qu'il y a un avantage à procéder
-    de manière récursive. En effet, certaines instances sont hors de portée de
+    de manière itérative. En effet, certaines instances sont hors de portée de
     la version récursive qui se heurte à la limite de profondeur des appels
     récursifs.
     
@@ -1001,11 +1034,57 @@ Le tableau, entièrement rempli est montré dans la figure
     :caption:
 
 
+Analyse de complexité
+=====================
 
+Complexité temporelle
+---------------------
 
+La version récursive mémoïsée et itérative ont toutes deux la même complexité
+temporelle, comme d'habitude en programmation dynamique. Dans les deux cas, la
+complexité est déterminée dans le pire des cas par le nombre d'appels récursifs
+non mémoïsés ou le nombre de cases dans le tableau de programmation dynamique.
+Dans le cas du sac à dos, les deux seuls paramètres indépendants dont dépend
+chaque sous problème est l'indice :math:`k` de l'objet considéré et la capacité
+:math:`C` du sac à dos . Les appels mémoïsés coûtent :math:`\Theta(1)`
+opérations, de même que la recombinaison des solutions optimales. La complexité
+temporelle est donc
 
+..  math::
 
+    (N+1) \cdot (C+1) \cdot \Theta(1) = \Theta(N \cdot C)
 
+Malheureusement, cette complexité n'est pas polynomiale, mais
+**pseudo-polynomiale**.
+
+Complexité spatiale
+-------------------
+
+Un des talons d'Achille des algorithmes de programmation dynamique est leur
+forte consommation mémoire. En effet, la complexité spatiale des algorithmes
+récursifs et itératifs sont également de complexité :math:`\Theta(N \cdot C)` vu
+que la table de mémoïsation doit dans les deux cas stocker :math:`(N+1)\cdot
+(C+1)` valeurs différentes.
+
+Dans le cas où l'on n'a pas besoin de reconstruire la solution, mais où l'on ne
+s'intéresse qu'à la valeur optimale, on peut toutefois ne se rappeler que de
+deux lignes du tableau de mémoïsation et avoir une complexité spatiale
+:math:`\Theta(C)`.
+
+Avantages et inconvénients
+==========================
+
+L'un des avantages de la programmation dynamique pour résoudre le problème du
+sac à dos est la formulation excessivement simple qui donne une solution
+optimale pour des instances de petite et moyenne taille (quelques milliers
+d'objets et une capacité du sac à dos raisonnable).
+
+En revanche, les algorithmes de programmation dynamique sont particulièrement
+sensibles à la capacité du sac à dos, alors que d'autres algorithmes ne sont pas
+du tout affectés par cette grandeur. De plus, si les coefficients de poids ne
+sont pas entiers, il faut mettre la capacité et les poids à l'échelle pour
+obtenir des nombres entiers, ce qui donne lieu à une capacité de sac à dos et
+une consommation mémoire importante.
     
 
 

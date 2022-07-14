@@ -8,7 +8,7 @@ class DocumentInfos:
     month = u'Juillet'
     seminary_title = u'Algorithmes et structures de données II'
     tutor = u"Cédric Donner"
-    release = "Version intermédiaire"
+    release = "(Version finale)"
     repository_url = "https://github.com/donnerc/prog-dynamique"
 
     @classmethod

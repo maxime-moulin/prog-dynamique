@@ -14,11 +14,10 @@ Programmation dynamique
     introduction.rst
     01-fibonacci.rst
     knapsack-dp.rst
-
+    conclusion.rst
     references.rst
 
-..  only:: html
-
+..
     ..  toctree::
         :maxdepth: 2
         :caption: Table des matières
