@@ -56,6 +56,7 @@ La fonction ``fib(n)`` ci-dessous implémente la récursion naïve et le tableau
 différentes valeurs de :math:`n`.
 
 ..  code-block:: python
+    :caption: Implémentation récursive naïve pour calculer :math:`F(n)`
 
     def fib(n):
         if n <= 1:
@@ -180,7 +181,12 @@ opérations impliquées dans la recombinaison des sous-solutions :math:`F(n-1)` 
 formule de récurrence ``T(n)`` correspond justement à la suite de Fibonacci. On
 a donc :math:`T(n) \geq F(n) \approx \phi^n` où :math:`\phi` est le nombre d'or,
 ce qui nous donne un :math:`\Theta(\phi^n) = \Theta(2^n)` pour la complexité
-temporelle.
+temporelle. 
+
+Une autre manière de calculer la complexité temporelle est de constater que
+:math:`T(n) \geq 2\cdot T(n-2) = \Theta(2^{\frac{n}{2}}) = \Theta(2^n)` puisque
+cela correspond au nombre de nœuds d'un arbre binaire dont les deux sous-arbres
+sont de hauteur ``n-2``.
 
 ..  only:: comment
 
@@ -271,62 +277,166 @@ Concrètement, il faut stocker la valeur de retour de la fonction récursive
 ``fib(n)`` dans une table de hachage en utilisant les valeurs des paramètres
 passés à la fonction lors de l'appel comme clé d'accès. 
 
-..  _fib_memo1.py
+Pour mémoïser une fonction récursive, il faut suivre les étapes suivantes
 
-..  literalinclude:: scripts/fib_memo1.py
-    :caption:
-    :linenos:
+#.  Transformer la fonction récursive pour qu'elle ne possède plus qu'un seul
+    ``return``. Cette étape est facultative mais simplifie le processus.
 
-La version mémoïsée de l'algorithme ``fib(n)`` permet de trouver le résultat en
-un temps minime, même pour des valeurs de :math:`n` impensables pour
-l'algorithme récursif amnésique. La sortie du programme :ref:`fib_memo1.py` est
-la suivante:
+#.  Rajouter une structure de données (table de hachage ou tableau par exemple)
+    qui survit à l'exécution de la fonction, par exemple dans l'espace global.
+    Puis, dans la fonction récursive, avant le ``return``, il faut stocker la
+    valeur de retour dans la table de mémoïsation sous la clé correspondant à la
+    valeur des paramètres lors de l'appel (en l'occurrence le paramètre ``n``).
 
-::
+#.  Tout au début de la fonction récursive, vérifier dans la table de
+    mémoïsation si le calcul a déjà été fait. Il suffit de vérifier si la table
+    de mémoïsation possède déjà une valeur à l'emplacement indiqué par les
+    valeurs des paramètres. Si c'est le cas, il faut court-circuiter l'exécution
+    de la fonction avec un "early return" en retournant la valeur présente dans
+    la table de mémoïsation.
 
-    fib(5) -> 5, exécuté en 0.002 ms
-    fib(10) -> 55, exécuté en 0.003 ms
-    fib(20) -> 6765, exécuté en 0.007 ms
-    fib(200) -> 280571172992510140037611932413038677189525, exécuté en 0.015 ms
+.. _refactore-fib-memoization:
+
+..  figure:: figures/refactore-fib-memoization.png
+    :align: center
+    :width: 100%
+
+    Étapes pour rajouter la mémoïsation à la fonction ``fib(n)``
+
+
+
+
+..
+    ..  code-block:: python
+
+        def fib(n):
+            if n <= 1:
+                return n
+            return fib(n - 1) + fib(n - 2)
+
+    ..  code-block:: python
+
+        def fib(n):
+            if n <= 1:
+                result = n
+            else:
+                result = fib(n - 1) + fib(n - 2)
+            return result
+
+    ..  code-block:: python
+
+        memo = {}
+        def fib(n):
+            if n <= 1:
+                result = n
+            else:
+                result = fib(n - 1) + fib(n - 2)
+            memo[n] = result
+            return result
+
+..
+    Le code :ref:`code-fib-memoized` montre la version mémoïsée de la fonction
+    ``fib(n)``.
+
+    ..  _code-fib-memoized:
+
+    ..  code-block:: python
+        :caption: Version mémoïsée de ``fib(n)``
+
+        memo = {}
+        def fib(n):
+            if n in memo:
+                return memo[n]
+        
+            if n <= 1:
+                result = n
+            else:
+                result = fib(n - 1) + fib(n - 2)
+            memo[n] = result
+            return result
+
+Pour éviter d'avoir une structure de données qui traîne dans l'espace de noms
+global, on peut faire un petit réusinage du code en faisant de la partie
+récursive mémoïsée une fonction locale à une autre fonction et en incluant la
+table de mémoïsation comme variable locale de la fonction ``fib(n)``. En raison
+du mécanisme de fermeture, la table de mémoïsation survit ainsi toujours à
+l'exécution de la fonction ``f(n)`` qui peut y accéder comme s'il s'agissait
+d'une variable globale.
+
+..  code-block:: python
+    :caption: Version récursive mémoïsée avec encapsulation de la table de mémoïsation
+
+    def fib(n):
+        memo = {}
+        def f(n):
+            if n in memo:
+                return memo[n]
+        
+            if n <= 1:
+                result = n
+            else:
+                result = f(n - 1) + f(n - 2)
+            memo[n] = result
+            return result
+        return f(n)
+
+
+La version mémoïsée de l'algorithme ``fib(n)`` permet de trouver le résultat
+rapidement, même pour des valeurs de :math:`n` impensables pour l'algorithme
+récursif amnésique. La sortie du programme :ref:`fib_memo1.py` est la suivante:
+
+.. _table-timings-memoized-fib:
+
+..  csv-table:: Temps d'exécution de la fonction ``fib(n)`` mémoïsée
+    :header-rows: 1
+
+    :math:`n`, :math:`F(n)`, Temps d'exécution
+    5, 5, 0.002 ms
+    10, 55, 0.003 ms
+    20, 6765, 0.007 ms
+    200, 280571172992510140037611932413038677189525, 0.015 ms
+    800, ``RecursionError``, Non disponible
 
 
 
 De manière générale, la mémoïsation sert à éviter de recalculer un résultat déjà
 calculé au préalable. Concrètement, au niveau des appels récursifs, cela a pour
-effet de couper toutes les branches inutiles de l'arbre, comme le montre la
-figure :ref:`fib-tree-with-memo` pour l'appel ``fib_memo1.py(6)``
+effet de couper toutes les branches inutiles de l'arbre des appels de la
+fonction récursive, comme le montre la figure :ref:`fib-6-tree-with-memo` pour
+l'appel ``fib(6)``.
 
 ..  only:: html
 
     L'animation ci-dessous montre les appels récursifs de la version mémoïsée
-    ``fib_memo1(n=6)``.
+    ``fib(n=6)``.
 
     ..  figure:: scripts/fib_memoized-6.gif
         :align: center
-        :width: 80%
+        :width: 40%
 
         Animation montrant les appels récursifs à la fonction ``fib(n)`` pour
-        :math:`n = 4`
+        :math:`n = 6`
 
 
-..  _fib-tree-with-memo:
+..  _fib-6-tree-with-memo:
 
 ..  figure:: figures/fib_memoized-6.png
     :align: center
-    :width: 60%
-
-    Arbre des appels récursifs lors de l'appel ``fib_memo1(6)``
-
-Pour rappel, le même appel avec l'algorithme ``fib(n)`` non mémoïsé aurait
-donné lieu à l'arbre de la figure :ref:`fib-tree-6`.
-
-..  _fib-tree-6:
-
-..  figure:: figures/fib-6.png
-    :align: center
-    :width: 90%
+    :width: 25%
 
     Arbre des appels récursifs lors de l'appel ``fib(6)``
+
+..
+    Pour rappel, le même appel avec l'algorithme ``fib(n)`` non mémoïsé aurait
+    donné lieu à l'arbre de la figure :ref:`fib-tree-6`.
+
+    ..  _fib-tree-6:
+
+    ..  figure:: figures/fib-6.png
+        :align: center
+        :width: 90%
+
+        Arbre des appels récursifs lors de l'appel ``fib(6)``
 
 
 Analyse de complexité de la récursion avec la mémoïsation
@@ -335,23 +445,28 @@ Analyse de complexité de la récursion avec la mémoïsation
 Complexité temporelle
 ---------------------
 
-De manière générale, la complexité d'un algorithme utilisant la programmation
-dynamique se calcule de la manière suivante:
+De manière générale, pour déterminer la complexité d'un algorithme utilisant la
+programmation dynamique, on considère le nombre d'appels récursifs non mémoïsés
+à faire. En effet, les appels mémoïsés coûtent :math:`\Theta(1)` en temps pour
+autant que la table de mémoïsation permette un accès en :math:`\Theta(1)`
+opérations.
 
 ..  math:: 
 
-    \text{nombre de sous-problèmes} \times \text{complexité pour chaque sous-problème}
+    \text{nombre d'appels non mémoïsés} \times \text{complexité pour chaque
+    appel non mémoïsé}
 
-Dans le cas présent, pour calculer le :math:`n`-ième terme de la suite de
+Dans le cas présent, pour calculer le terme de rang :math:`n` de la suite de
 Fibonacci, il faut calculer tous les :math:`n` termes précédents, ce qui fait en
-tout :math:`n+1` sous-problèmes. En supposant que l'addition de :math:`F(n-1)`
-et :math:`F(n-2)` est :math:`\Theta(1)`, la résolution de chaque sous-problème
-est :math:`\Theta(1)` puisque les appels récursifs sont mémoïsés. La complexité
-temporelle est donc :math:`n \times \Theta(1) = \Theta(n)`.
+tout :math:`n+1` sous-problèmes (appels non mémoïsés). En supposant que
+l'addition de :math:`F(n-1)` et :math:`F(n-2)` est :math:`\Theta(1)`, la
+résolution de chaque sous-problème est :math:`\Theta(1)`, puisque les appels
+récursifs sont mémoïsés. La complexité temporelle est donc :math:`(n+1) \times
+\Theta(1) = \Theta(n)`.
 
 Une autre manière de déterminer la complexité temporelle est de déterminer le
 nombre de nœuds de l'arbre des appels récursifs. Comme le montre la figure
-:ref:`fib-tree-with-memo`, la version mémoïsée ne demande que :math:`n + (n - 1)
+:ref:`fib-6-tree-with-memo`, la version mémoïsée ne demande que :math:`n + (n - 1)
 = 2n-1` appels, ce qui donne lieu à une complexité temporelle de
 :math:`\Theta(n)`.
 
@@ -386,38 +501,30 @@ utilisation est très simple:
 Optimisation de la mémoïsation avec un cache LRU
 ================================================
 
-Nous avons vu que la version version mémoïsée demande en gros deux fois plus de
-mémoire que la version naïve. Cette situation peut être améliorée en ne
-mémorisant que les deux derniers termes calculés au lieu de mémoriser tous les
-termes précédents. En effet, pour calculer :math:`F(n)`, il suffit de se
-souvenir de :math:`F(n-1)` et de :math:`F(n-2)`. Ce mécanisme de mémorisation
-peut être implémenté à l'aide d'un cache LRU de taille 3 au lieu d'une table de
-hachage complète:
+Nous avons vu que la version mémoïsée demande en gros deux fois plus de mémoire
+que la version naïve. Cette situation peut être améliorée en ne mémorisant que
+les deux derniers termes calculés au lieu de mémoriser tous les termes
+précédents. En effet, pour calculer :math:`F(n)`, il suffit de se souvenir de
+:math:`F(n-1)` et de :math:`F(n-2)`. Ce mécanisme de mémoïsation peut être
+implémenté à l'aide d'un cache LRU de taille 3 au lieu d'une table de hachage
+complète:
 
 ..  literalinclude:: scripts/fib_lru_cache.py
     :caption:
 
-On peut par exemple implémenter un cache LRU à l'aide d'une liste doublement
-chaînée dans laquelle on "tourne". Le principe est simple : lorsqu'on rajoute
-une nouvelle valeur dans le cache et qu'il est plein, on remplace la plus
-ancienne valeur présente par la nouvelle valeur à insérer.
+..
+    On peut par exemple implémenter un cache LRU à l'aide d'une liste doublement
+    chaînée dans laquelle on "tourne". Le principe est simple : lorsqu'on rajoute
+    une nouvelle valeur dans le cache et qu'il est plein, on remplace la plus
+    ancienne valeur présente par la nouvelle valeur à insérer.
 
 L'avantage d'un cache LRU est qu'il permet une mémoïsation de complexité
 spatiale :math:`\Theta(1)`, sans compter le stockage nécessaire à la pile des
-appels récursifs qui reste :math:`\Theta(n)`, au lieu du stockage
-:math:`\Theta(n)` de la table de hachage, tout en permettant un accès en
-:math:`\Theta(1)`. En définitive, la complexité spatiale de l'algorithme
-``fib(n)`` mémoïsé avec un cache LRU reste :math:`\Theta(n)` en raison de la
-pile d'appels, mais c'est un :math:`\Theta(n)` plus avantageux que celui de la
-mémoïsation avec une table de hachage.
+appels récursifs qui reste :math:`\Theta(n)`. En définitive, la complexité
+spatiale de l'algorithme ``fib(n)`` mémoïsé avec un cache LRU reste
+:math:`\Theta(n)` en raison de la pile d'appels, mais c'est un :math:`\Theta(n)`
+plus avantageux que celui de la mémoïsation avec une table de hachage.
 
-..
-    Implémentation d'un cache LRU basique
-    -------------------------------------
-
-    Ceci n'est pas une priorité ...b
-
-    Voici une implémentation basique d'un cache LRU
 
 Programmation dynamique, approche descendante (top-down)
 ========================================================
@@ -429,11 +536,11 @@ L'approche descendante de la programmation dynamique consiste essentiellement à
 utiliser un algorithme récursif agrémenté de mémoïsation pour éviter l'explosion
 exponentielle du nombre de branches dans l'arbre des appels récursifs. 
 
-L'idée est de partir du problème que l'on veut résoudre et utiliser une approche
-récursive pour "descendre l'arbre" jusqu'à atteindre une feuille, qui correspond
-à une version triviale du problème, puis faire remonter les valeurs de retour le
-long des branches de l'arbre jusqu'à parvenir à la racine de l'arbre
-correspondant au problème original que l'on voulait résoudre.
+L'idée est de partir du problème que l'on veut résoudre et d'utiliser une
+approche récursive pour "descendre l'arbre" jusqu'à atteindre une feuille, qui
+correspond à une version triviale du problème, puis faire remonter les valeurs
+de retour le long des branches de l'arbre jusqu'à parvenir à la racine de
+l'arbre correspondant au problème original que l'on voulait résoudre.
 
 Dans le cas du calcul des termes de la suite de Fibonacci, cette approche permet
 déjà d'améliorer l'approche récursive "amnésique", de complexité
@@ -448,16 +555,24 @@ qui se débarrasse de la récursion. Dans la section suivante, nous allons
 présenter cette approche, en utilisant toujours l'exemple du calcul des termes
 de la suite de Fibonacci.
 
-Dépendances et tri topologique inverse
-======================================
+Graphe de dépendances et tri topologique inverse
+================================================
 
 Pour pouvoir être résolu par programmation dynamique, il faut que le **graphe de
-dépendances** des calculs soit acyclique. Il n'y a aucun problème avec le calcul
-des nombres de Fibonacci puisque que le calcul de :math:`F(n)` n'est dépendant
-que du calcul de :math:`F(n-1)` et :math:`F(n-2)`, comme le montre le graphe de
-la figure :ref:`fig-dep-graph-Fn` dépendances pour le calcul de :math:`F(5)`
+dépendances** des calculs soit acyclique. 
 
-..  _fig-dep-graph-Fn:
+..  _defn:dependency-graph:
+
+..  admonition:: Définition (Graphe de dépendances / graphe des sous-problèmes)
+
+    Le graphe de dépendances (également appelé graphe des sous-problèmes) d'une
+    fonction récursive est le graphe orienté :math:`G(V, E)` dont les sommets
+    :math:`v \in V` représentent les calculs à effectuer, à savoir les appels
+    récursifs à faire et qui contient une arête :math:`(u, v) \in E` si et
+    seulement si le calcul du problème :math:`u` dépend directement du calcul du
+    problème de :math:`v`.
+
+..  _fig-dependency-graph-fibn:
 
 ..  graphviz::
     :caption: Graphe de dépendances du calcul de :math:`F(5)`
@@ -481,16 +596,20 @@ la figure :ref:`fig-dep-graph-Fn` dépendances pour le calcul de :math:`F(5)`
          d -> f;
      }
 
-..  _defn:dependency-graph:
 
-..  admonition:: Définition (Graphe de dépendances)
-
-    Dans le graphe de dépendances est un graphe orienté :math:`G(V, E)` dont les
-    nœuds :math:`v \in V` représentent les calculs à effectuer, à savoir les appels
-    récursifs à faire. Le graphe contient une arête :math:`(u, v) \in E` si et
-    seulement si le calcul de :math:`u` dépend du calcul de :math:`v`.
 
 ..  _prop:condition-necessaire-graphe-dependances-dag:
+
+..  admonition:: Proposition
+
+    Si on établit une relation d'équivalence entre les nœuds de l'arbre des
+    appels récursifs correspondant à un appel avec les mêmes paramètres
+    (mémoïsés dans un même emplacement), on obtient le graphe des dépendances en
+    faisant "l'arbre des appels modulo la relation d'équivalence". En d'autres
+    termes, on obtient chaque sommet du graphe de dépendances en réduisant les
+    nœuds équivalents de l'arbre des appels récursifs. On obtient les arêtes du
+    graphe de dépendances en réduisant de manière analogue toutes les arêtes de
+    l'arbre des appels entre deux nœuds équivalents.
 
 ..  admonition:: Proposition (Condition nécessaire pour la programmation dynamique)
 
@@ -501,21 +620,166 @@ En effet, si le graphe de dépendances est cyclique, la récursion va
 immanquablement conduire à un algorithme qui tourne en boucle infinie (récursion
 infinie indirecte).
 
+Il n'y a aucun problème avec le calcul des nombres de Fibonacci puisque le
+calcul de :math:`F(n)` n'est dépendant que du calcul de :math:`F(n-1)` et
+:math:`F(n-2)`, comme le montre le graphe de dépendances de la figure
+:ref:`fig-dependency-graph-fibn` pour le calcul de :math:`F(5)`.
+
+
 ..  admonition:: Proposition (Ordre d'évaluation des appels récursifs)
 
     Si le graphe de dépendances est un DAG (*directed acyclic graph* = graphe
     orienté acyclique), l'ordre d'évaluation des appels récursifs correspond à
     un "tri topologique inverse" du graphe de dépendances, à savoir à un tri
-    topologique de graphe de dépendances inversé.
+    topologique du graphe de dépendances inversé.
 
+Approche itérative ascendante
+=============================
+
+L'approche récursive développée précédemment correspond à l'approche
+"descendante" de la programmation dynamique. Il existe également une approche
+ascendante qui se débarrasse de la récursion. Cette approche est généralement
+plus performante, car elle évite les pénalités de performance liés aux appels
+récursifs.
+
+..  admonition:: Programmation dynamique ascendante (*bottom-up*)
+    :class: tip
+
+    L'approche ascendante de la programmation dynamique fonctionne à l'envers de
+    l'approche descendante. Au lieu de partir du résultat auquel on veut arriver
+    et décomposer le problème jusqu'à ce qu'il soit trivial, on part du cas
+    trivial et on construit progressivement la solution en mémorisant toutes les
+    étapes dans une table de hachage ou un tableau. En général, on préfère
+    stocker les résultats intermédiaires dans un tableau pour de meilleures
+    performances.
 
 ..
-    ..  danger:: 
+    L'approche ascendante, à rebours de l'approche récursive qui commence avec le
+    calcul souhaité et descend vers les cas de base, démarre avec les cas de base
+    pour "remonter" au résultat souhaité. 
+    
+Les calculs doivent cependant être faits dans un ordre tel que l'on calcule
+toujours les dépendances d'un calcul avant de faire le calcul lui-même. Dans le
+cas de Fibonacci, il est trivial de déterminer cet ordre. En effet, le graphe de
+dépendances de ``fib(5)`` de la figure :ref:`inverse-dependency-graph`
 
-        Rajouter une explication sur les dépendances et le fait et les DAG et le
-        lien avec le tri topologique.
+.. _inverse-dependency-graph:
 
-        Il faut que le graphe des dépendances soit un DAG (Graphe orienté
-        acyclique), sans quoi il n'est pas possible de résoudre le problème tel que
-        avec la programmation dynamique et il est nécessaire de le modifier pour y
-        parvenir.
+..  graphviz::
+    :caption: Graphe de dépendances inversé du calcul de :math:`F(5)`
+
+    digraph example {
+        rankdir=LR;
+        rank=same;
+        "F(0)" -> "F(2)" -> "F(3)" -> "F(4)" -> "F(5)" 
+        "F(1)" -> "F(2)"
+        "F(1)" -> "F(3)" [constraint=false]
+        "F(2)" -> "F(4)" [constraint=false]
+        "F(3)" -> "F(5)" [constraint=false]
+    }   
+
+On voit facilement qu'on obtient un tri topologique de ce graphe orienté
+acyclique en triant les sommets :math:`F(n)` dans l'ordre croissant de
+:math:`n`: :math:`F(0) \rightarrow F(1) \rightarrow F(2) \rightarrow \ldots
+\rightarrow F(5)`.
+
+De la version récursive à la version itérative
+==============================================
+
+Pour passer de la version récursive à la version itérative, on procède en
+suivant les transformations suivantes:
+
+#.  Transformation de la table de mémoïsation en tableau contenant autant de
+    dimensions que de paramètres indépendants dans la clé d'accès à la table de
+    mémoïsation. Dans le cas des nombres de Fibonacci, chaque appel à la
+    fonction ne contient que le paramètre :math:`n`. Le tableau sera donc de
+    dimension 1. Dans chaque dimension, le tableau doit avoir une taille
+    correspondant au nombre de valeurs entières différentes que peut prendre le
+    paramètre. Dans notre cas, le paramètre ``n`` peut prendre n'importe
+    laquelle des :math:`N+1` valeurs entières entre :math:`0` et :math:`N`.
+ 
+    ::
+
+        memo = [None for _ in range(N + 1)]
+
+#.  Transformation des appels récursifs ``f(n)`` en un accès au tableau de
+    mémoïsation ``memo[n]``.
+
+::
+
+    def fib(n):
+        memo = {}
+        def f(n):
+            if n in memo:
+                return memo[n]
+        
+            if n <= 1:
+                result = n
+            else:
+                result = f(n - 1) + f(n - 2)
+            memo[n] = result
+            return result
+        return f(n)
+
+::
+
+    def fib(n):
+        memo = [None for _ in range(n+1)]
+        # initialisation du tableau avec les cas de base
+        memo[:2] = [0, 1]
+
+        # remplir le tableau itérativement (dans le bon ordre) au lieu de faire des appels récursifs
+        for k in range(2, n + 1):
+            # remplacer les appels récursifs par des accès au tableau
+            result = memo[n - 1] + memo[n - 2]
+            memo[k] = result
+        return memo[n]
+
+
+Implémentation en Python
+========================
+
+Commençons pas étudier une implémentation Python ascendante, qui n'utilise pas
+la récursion et qui mémorise les résultats intermédiaires dans une table de
+hachage.
+
+..  literalinclude:: scripts/fib_tabulation.py
+    :caption:
+    :linenos:
+    :pyobject: fib_hash
+    
+De manière équivalente, on peut remplacer la table de hachage par un tableau
+(liste en Python) pour de meilleures performances. Le seul changement à faire
+est à la ligne 2.
+
+..  literalinclude:: scripts/fib_tabulation.py
+    :caption:
+    :linenos:
+    :emphasize-lines: 2
+    :pyobject: fib_table
+
+On peut encore améliorer la performance de ce dernier algorithme en tenant
+compte du fait que, pour calculer :math:`F(n)`, il suffit de connaître
+:math:`F(n-1)` et :math:`F(n-2)` et qu'il n'est pas nécessaire de se souvenir de
+tous les résultats intermédiaires précédents. On peut réaliser très facilement
+en prenant un tableau de 3 éléments qui va, en tout temps, stocker les résultats
+pour le rang :math:`n`, :math:`n-1` et :math:`n-2`. On utilise pour ce faire un
+type personnalisé de cache LRU basé sur un tableau de longueur 3 parcouru modulo
+3, de manière cyclique.
+
+..  literalinclude:: scripts/fib_tabulation.py
+    :caption:
+    :linenos:
+    :emphasize-lines: 2
+    :pyobject: fib_table_lru
+
+
+L'implémentation du cache LRU est dans ce cas très simple puisque les clés sont
+des nombres entiers. Elle consiste essentiellement à accéder aux indices modulo
+la taille du cache, ce qui a pour effet de faire une rotation dans le tableau
+``self.cache`` à mesure que l'indice croît.
+
+..  literalinclude:: scripts/dp.py
+    :caption:
+    :linenos:
+    :pyobject: ArrayLRUCache

@@ -3,23 +3,23 @@
 Introduction
 ############
 
-
-Ce tutoriel présente le programmation dynamique, qui est une stratégie générale
-de résolution de problèmes du type "diviser pour régner". Elle est souvent
-utilisée pour résoudre de manière exacte des problèmes d'optimisation tels que
-le problème du sac à dos.
+..
+    Ce tutoriel présente le programmation dynamique, qui est une stratégie générale
+    de résolution de problèmes du type "diviser pour régner". Elle est souvent
+    utilisée pour résoudre de manière exacte des problèmes d'optimisation tels que
+    le problème du sac à dos.
 
 Qu'est-ce que la programmation dynamique?
 =========================================
 
 La programmation dynamique est une technique de résolution de problèmes
-d'optimisation développée par Richard Bellman dès les années 1940 qui revêt une
-importance capitale en optimisation et en théorie du contrôle. Comme l'explique
-Moshe Sniedovich dans l'introduction à son ouvrage
+d'optimisation développée par Richard Bellman dès les années 1940. Elle revêt
+une importance capitale en optimisation et en théorie du contrôle. Comme
+l'explique Moshe Sniedovich dans l'introduction à son ouvrage
 :cite:p:`DPFoundationsAndPrinciples` sur la programmation dynamique, tout le
 monde n'est pas d'accord sur ce que recouvre vraiment la programmation dynamique
-et il n'est pas aisé de définir avec précision le concept de programmation
-dynamique.
+et il n'est pas aisé de donner une définition universellement acceptée du
+concept de programmation dynamique:
 
 ..  epigraph:: 
 
@@ -37,12 +37,15 @@ dynamique.
     whatever answer one formulates, by necessity it will be subjective in
     nature.
 
+    --Moshe Sniedovich, Dynamic Programming: Foundations and Principles
+
+
 Quoi qu'il en soit, on peut constater en parcourant la table des matières
 d'ouvrages tels que :cite:p:`Bellman+2021` ou
 :cite:p:`DPFoundationsAndPrinciples` que la programmation dynamique dépasse
 largement le cadre de l'algorithmique et est davantage à rattacher aux
-mathématiques appliquées. Le mot "programmation" dans "programmation dynamique"
-ne se réfère à l'origine pas à la "programmation informatique", dans le sens de
+mathématiques. Le mot "programmation" dans "programmation dynamique" ne se
+réfère à l'origine pas à la "programmation informatique", dans le sens de
 contrôler un ordinateur pour résoudre un problème algorithmique. La
 programmation dynamique, tout comme la programmation mathématique, ou
 programmation linéaire, a vu le jour avant même l'existence des ordinateurs.
@@ -56,8 +59,6 @@ la résolution de problèmes algorithmiques présentant une certaine structure.
 C'est plutôt dans ce sens, restreint aux problèmes algorithmiques, que la
 programmation dynamique est abordée dans ce travail. 
 
-..
-    --Moshe Sniedovich, Dynamic Programming: Foundations and Principles :cite:p:`DPFoundationsAndPrinciples`
 
 ..
     Stratégie de diviser pour régner
@@ -90,10 +91,10 @@ Problèmes typiques de la programmation dynamique
 ================================================
 
 Pour qu'un problème puisse être avantageusement résolu par programmation
-dynamique, il faut qu'il présente deux propriétés importantes. Il doivent
-présenter des **sous-structures optimales** (*optimal substructures* en anglais)
-et être décomposables en sous-problèmes non disjoints (*overlapping
-subproblems* en anglais).
+dynamique, il faut qu'il présente deux propriétés importantes. Il doit présenter
+des **sous-structures optimales** (*optimal substructures* en anglais) et être
+décomposables en sous-problèmes non disjoints (*overlapping subproblems* en
+anglais).
 
 ..  admonition:: Sous-structures optimales
 
@@ -114,75 +115,20 @@ Différences avec l'approche "diviser pour régner"
 =================================================
 
 Le **diviser pour régner** (*Divide and Conquer* en anglais) est une stratégie
-très utilisée en informatique pour résoudre des problèmes épineux. En effet, de
-très nombreux problèmes peuvent être résolus en commençant par résoudre une
-variante plus simple du problème en question.
-
-De manière générale, cette stratégie procède de la manière suivante:
+très utilisée en informatique pour résoudre des problèmes épineux. De manière
+générale, cette stratégie procède de la manière suivante:
 
 * Décomposer le problème à résoudre en sous-problèmes plus faciles à résoudre
 * Continuer à décomposer les sous-problèmes en sous-sous-problèmes, jusqu'à ce que le problème soit trivial à résoudre
 * Combiner les solutions des sous-problèmes pour résoudre le problème initial.
 
 La stratégie du diviser pour régner fonctionne bien lorsque les sous-problèmes
-sont disjoints, comme c'est le cas pour le tri fusion ou la recherche
-dichotomique. 
+sont disjoints, comme dans le cas du tri fusion ou de la recherche dichotomique. 
 
 Lorsque les sous-problèmes sont non disjoints, l'application naïve d'une
 stratégie de diviser pour régner débouche sur un algorithme très inefficace dont
 la complexité est :math:`\Theta(2^n)` si :math:`n` est la taille de l'entrée.
-C'est par exemple le cas si l'on calcule le :math:`n`-ième terme de la suite de
-Fibonacci de manière récursive.
-
-Pour rappel, le :math:`n`-ième terme de la suite de Fibonacci est défini
-récursivement comme suit pour :math:`n \in \mathbb{N}`:
-
-..  math:: 
-
-    F(n) = \begin{cases}
-    0 &\text{si $n = 0$} \\
-    1 &\text{si $n = 1$} \\
-    F(n-2) + F(n-1) &\text{sinon}
-    \end{cases}
-
-Le programme ci-dessous lance la fonction ``fib(n)`` pour :math:`n=5, 10, 20,
-30, 40, 50` et chronomètre le temps d'exécution de l'appel.
-
-..  only:: latex
-
-    \pagebreak
-
-..  literalinclude:: scripts/fib_timeit.py
-    :linenos:
-
-L'exécution de ce programme produit la sortie suivante:
-
-::
-
-    fib(5) -> 8, exécuté en 0.002 ms
-    fib(10) -> 89, exécuté en 0.011 ms
-    fib(20) -> 10946, exécuté en 1.121 ms
-    fib(30) -> 1346269, exécuté en 132.518 ms
-    fib(40) -> 165580141, exécuté en 16060.584 ms
-
-On voit bien que l'algorithme n'est pas efficace, même pour des valeurs
-relativement petites de :math:`n`. L'exécution de l'appel pour :math:`n=50` est
-même tellement lente que le programme ne produit aucune sortie en temps
-raisonnable. De nombreux problèmes intéressants tels que le problème du rendu de
-pièces de monnaies ou du sac à dos présentent une structure permettant une
-résolution par décomposition, qui est toutefois inefficace si l'on procède de
-manière naïve.
-
-La section :ref:`fibonacci-memoisation` explique pourquoi cet algorithme
-récursif est tellement inefficace et comment utiliser la **mémoïsation**, une
-technique fondamentale en programmation dynamique, pour rendre une telle
-stratégie beaucoup plus efficace, en évitant de refaire plusieurs fois des
-calculs déjà effectués au préalable.
-
-La programmation dynamique sera ensuite appliquée à la résolution de plusieurs
-problèmes simples qui permettront de dégager les traits généraux
-d'implémentation de programmation dynamique. Nous terminerons par une
-application à de petites instances du problème du sac à dos.
+C'est par exemple le cas si l'on calcule les nombres de Fibonacci de manière
 
 Différences avec la stratégie gloutonne
 =======================================
@@ -190,21 +136,20 @@ Différences avec la stratégie gloutonne
 Certains problèmes d'optimisation peuvent être résolus par une approche
 gloutonne. C'est notamment le cas de la recherche du plus court chemin
 (single-source shortest path) dans un graphe pondéré positivement. L'algorithme
-de Dijkstra constitue une telle méthode gloutonne consistant à faire à chaque
-étape, le choix qui paraît le plus favorable.
+de Dijkstra constitue une telle méthode gloutonne.
 
 Au contraire de la stratégie gloutonne qui, à chaque étape fait systématiquement
-le choix qui paraît localement optimal, la programmation dynamique envisage et
-explore toutes les possibilités. À ce titre, la programmation dynamique se
-rapproche fortement de la stratégie par "force brute". Il s'agit toutefois d'une
-stratégie de force brute qui fonctionne avec précaution.
+le choix localement optimal, la programmation dynamique envisage et explore
+toutes les possibilités. À ce titre, la programmation dynamique se rapproche
+fortement de la stratégie par "force brute". Il s'agit toutefois d'une stratégie
+de force brute intelligente et efficace.
 
 Au contraire de la méthode gloutonne qui ne garantit souvent pas une solution
 optimale au problème d'optimisation global, la programmation dynamique vise et
-garantit une solution optimale.
+garantit une solution globalement optimale.
 
-Conseils pour aborder la programmation dynamique
-================================================
+Difficulté de la programmation dynamique
+========================================
 
 ..  tip::
 
@@ -235,9 +180,24 @@ les problèmes pouvant être résolus avec cette approche et de les reformuler d
 manière adaptée à la programmation dynamique. Tout ceci doit être entraîné sur
 de nombreux problèmes différents pour se faire la main.
 
+En définitive, comme le dit le prof. Erik Demaine à ses étudiants du MIT
+:cite:p:`mitocw:6.006:website, mitocw:6.006:lecture-19`, la programmation
+dynamique est facile une fois qu'on en a compris les rouages.
+
 ..  only:: html
 
     .. rubric:: Notes de bas page
 
 ..  [#f1] Nous présenterons ultérieurement cette notion importante de la
     programmation dynamique 
+
+Pour faciliter la compréhension du sujet, ce rapport par du calcul récursif des
+nombres de Fibonacci dans le chapitre :ref:`fibonacci` et explique pourquoi cet
+algorithme récursif est tellement inefficace en rappelant le modèe d'exécution
+des fonctions récursives. Il présente également les outils de base de la
+programmation dynamique pour améliorer la situation à l'aide de la mémoïsation
+et l'approche duale ascendante (bottom-up) qui construit la solution
+itérativement. Ces principes sont ensuite utilisés dans le chapitre
+:ref:`knapsack-dp` pour développer un algorithme de programmation dynamique
+résolvent des instances et petite moyenne taille du sac à dos.
+

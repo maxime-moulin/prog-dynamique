@@ -58,10 +58,28 @@ def fib_memo1(n):
         memo[n] = fib_memo1(n=n-1) + fib_memo1(n=n - 2)
     return memo[n]
 
+def fib(n):
+    memo = {}
+    @vs(
+        show_return_value=True,
+        node_properties_kwargs=config,
+        )
+    def f(n):
+        if n in memo:
+            return memo[n]
+    
+        if n <= 1:
+            result = n
+        else:
+            result = f(n - 1) + f(n - 2)
+        memo[n] = result
+        return result
+    return f(n)
+
 
 def main(n=4, delay=1.5, filename="image"):
     # Call function
-    print(g(n=n))
+    print(fib(n=6))
     # Save recursion tree to a file
     vs.make_animation(f"{filename}-{n}.gif", delay=delay)
 

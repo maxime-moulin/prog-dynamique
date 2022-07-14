@@ -3,8 +3,7 @@ from dp import timeit
 
 def fib(n):
     if n <= 1:
-        return 1
-    
+        return n
     return fib(n - 2) + fib(n - 1)
 
 for n in [5, 10, 20, 30, 40, 50]:

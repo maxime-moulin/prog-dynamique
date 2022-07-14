@@ -12,8 +12,7 @@ Programmation dynamique
     :caption: Table des matières
 
     introduction.rst
-    01-fibonacci-memoisation.rst
-    02-fibonacci-tabulation.rst
+    01-fibonacci.rst
     knapsack-dp.rst
 
     references.rst
