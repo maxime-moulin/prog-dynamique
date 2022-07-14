@@ -157,10 +157,6 @@ d'objets emportés. Les données du problème sont les suivantes:
         
         x_0 \cdot 13 + x_1 \cdot 13 + x_2 \cdot 13 + x_3 \cdot 10 + x_4 \cdot 24 + x_5 \cdot 11 \leq 50
 
-..  raw:: latex
-
-    \pagebreak
-
 ..  admonition:: Fonction objectif
 
     La fonction objectif indique la valeur qui doit être optimisée. Dans notre
@@ -874,11 +870,135 @@ Le tableau Voici les tests des deux algorithmes sur des instances notées dans l
     la version récursive qui se heurte à la limite de profondeur des appels
     récursifs.
     
-    De plus, l'approche itérative semble plus rapide sur de plus grosses
-    instances. 
+    De plus, l'approche itérative semble plus rapide que la version récursive
+    sur de plus grosses instances. On constate tout de même que, pour plusieurs
+    milliers d'objets, le temps nécessaire pour exécuter l'algorithme croît
+    rapidement, ce qui est attendu pour une solution exacte d'un problème
+    NP-complet.
 
+Construction de la solution à partir du tableau
+===============================================
 
+L'algorithme présenté jusqu'à présent est capable de trouver le profit maximal,
+mais sans pouvoir fournir la liste des objets à inclure dans le sac. On peut
+toutefois construire la solution :math:`X = (x_0, x_1, \ldots, x_n)` à partir du
+tableau construit pendant le processus itératif.
 
+Pour cela, il faut comprendre la manière dont est rempli le tableau lors de la
+construction de la solution. Pour bien comprendre, prenons une instance plus
+simple du problème dans laquelle la capacité du sac à dos vaut :math:`C=8`, les
+profits sont ``weights = [2, 3, 4, 5]`` et les profits ``profits = [1, 2, 5,
+6]``. La figure :ref:`dp-kp-fill-table-step-01`  présente une représentation du
+problème avec le tableau dynamique (9 colonnes de droite). Les trois colonnes de
+gauche représentent les données du problème.
+
+.. _dp-kp-fill-table-step-01:
+
+..  figure:: figures/fill-table-step1.png
+    :align: center
+    :width: 100%
+
+    Premières étapes de remplissage du tableau de programmation dynamique
+
+..  admonition:: Remplissage du tableau
+    :class: hint
+
+    *   Les emplacements ``memo[4][0]`` à ``memo[4][8]``, notés ``memo[4][0..8]``
+        (cases rouges) sont tous préremplis par des zéros (cas de base) avant de
+        commencer le parcours du tableau.
+ 
+    *   Les emplacements ``memo[3][0]`` à ``memo[3][4]`` (rose) sont remplis
+        dans l'ordre avec des 0, car l'objet :math:`k=3` de poids :math:`W[3]=5`
+        ne peut pas être mis dans le sac. En d'autres termes, la condition
+       
+        ::
+        
+            if weights[k] <= c:
+
+        n'est pas satisfaite. Dans ce cas, il n'y a que l'alternative
+        ``profit_without = memo[k+1][c]`` qui est explorée et on copie
+        simplement la valeur de la case au-dessus dans ``memo[k][c]``.
+
+    *   Pour ``memo[3][5]``, il y a suffisamment de place pour mettre l'objet
+        :math:`k=3`. De ce fait, on considère les deux possibilités. On consulte
+        donc l'emplacement ``memo[4][5]`` qui vaut 0
+
+        ::
+
+            profit_without = memo[k+1][c]
+
+        puis, on consulte la case ``memo[k+1][c - W[k]]`` et on rajoute ``P[k]`` avec les instructions
+
+        ::
+            
+            remaining = c - weights[k]
+            profit_with = memo[k+1][remaining] + profits[k]
+
+        À l'issue de cette étape, ``profit_with`` vaut 6 qui correspond au
+        profit maximal. On stocke donc cette valeur dans ``memo[k][c]`` avec 
+
+        ::
+
+            best_profit = max(profit_with, profit_without)
+            memo[k][c] = best_profit
+
+    *   La formule générale pour remplir le tableau, qui découle directement de
+        l'algorithme, est donc la suivante
+
+        ::
+
+            memo[k][c] = max(memo[k+1][c], memo[k+1][c - W[k]] + P[k])
+
+        si :math:`W[k] <= c` et, dans le cas contraire, simplement
+        ``memo[k+1][c]``.
+
+Le tableau, entièrement rempli est montré dans la figure
+:ref:`dp-kp-fill-table-complete`.
+
+.. _dp-kp-fill-table-complete:
+
+..  figure:: figures/fill-table-complete.png
+    :align: center
+    :width: 100%
+
+    Tableau de programmation dynamique rempli
+
+..  admonition:: Construction de la solution concrète
+
+    Pour construire la solution, à savoir l'assignation d'une valeur de
+    :math:`\{0, 1\}` aux variables de décisions :math:`x_0, \ldots, x_{N-1}`, on
+    part de la case finale du tableau, à savoir ``memo[0][C]`` où ``C``
+    représente la capacité du sac à dos et on remonte les tableau selon les
+    étapes numérotées sur la figure :ref:`dp-kp-fill-table-complete` selon la
+    logique suivante:
+
+    #.  On compare la valeur de ``memo[k][c]`` avec la case du haut
+        ``memo[k+1][c]``.
+
+    #.  Si ``memo[k][c]`` et ``memo[k+1][c]`` ont la même valeur, c'est que
+        l'objet de la ligne :math:`k` actuelle ne contribue par à la valeur
+        optimale. On ne rajoute donc pas l'objet :math:`k` dans le sac en posant
+        :math:`x_k = 0`. On recommence au point 1, mais en montant d'une ligne
+        pour considérer le prochain objet tout en restant dans la même colonne.
+        Cette situation correspond aux étiquettes 1 et 4 dans la figure
+        :ref:`dp-kp-fill-table-complete`.
+
+    #.  Si, en revanche, ``memo[k][c] == memo[k+1][c] + P[k]``, ce que l'objet
+        :math:`k` de la ligne actuelle contribue au profit maximal. On le
+        rajoute donc dans le sac en posant :math:`x_k = 1`. On recommence au
+        point 1, mais en montant d'une ligne pour considérer le prochain objet.
+        Comme on a rajouté l'objet :math:`k`, il y a moins de place restante
+        dans le sac à dos et il faut donc aussi décaler de :math:`W[k]` colonnes
+        vers la gauche. Cette situations correspond aux étiquettes 2 et 5 dans
+        la figure :ref:`dp-kp-fill-table-complete`.
+
+    #.  On s'arrête lorsqu'on est parvenu à la ligne :math:`k = N-1` où
+        :math:`N` est le nombre d'objets.
+
+..  literalinclude:: scripts/knapsack_tabular.py
+    :pyobject: derive_solution
+    :linenos:
+    :caption:
 
 
 
