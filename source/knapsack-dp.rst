@@ -818,6 +818,7 @@ de ``c``.
 ..  literalinclude:: scripts/knapsack_tabular.py
     :caption:
     :linenos:
+    :pyobject: knapsack
 
 On constate qu'après cette transformation, le programme livre toujours le bon
 résultat:
