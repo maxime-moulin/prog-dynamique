@@ -13,7 +13,7 @@ Qu'est-ce que la programmation dynamique?
 =========================================
 
 La programmation dynamique est une technique de résolution de problèmes
-d'optimisation développée par Richard Bellman dès les années 1940. Elle revêt
+d'optimisation développée par Richard Bellman dès les années 1950. Elle revêt
 une importance capitale en optimisation et en théorie du contrôle. Comme
 l'explique Moshe Sniedovich dans l'introduction à son ouvrage
 :cite:p:`DPFoundationsAndPrinciples` sur la programmation dynamique, tout le

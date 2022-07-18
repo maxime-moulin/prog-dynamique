@@ -76,10 +76,19 @@ def fib(n):
         return result
     return f(n)
 
+@vs(
+    show_return_value=True,
+    node_properties_kwargs=config,
+)
+def fib(n):
+    if n <= 1:
+        return n
+    return fib(n=n - 1) + fib(n=n - 2)
+
 
 def main(n=4, delay=1.5, filename="image"):
     # Call function
-    print(fib(n=6))
+    print(fib(n=n))
     # Save recursion tree to a file
     vs.make_animation(f"{filename}-{n}.gif", delay=delay)
 
