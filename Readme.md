@@ -51,7 +51,7 @@ Le plus simple, pour démarrer, est de forker ce dépôt dans votre propre compt
 GitHub et cloner ce dernier sur votre machine locale ou dans un IDE en ligne tel
 que Gitpod.
 
-## Écrire son travail de maturité sur Gitpod
+## Édition en ligne avec gitpod.io
 
 L'IDE en ligne Gitpod permet de disposer de machines virtuelles complètes sur
 lesquelles faire tourner la chaines d'outils Sphinx / LaTeX pour écrire la
