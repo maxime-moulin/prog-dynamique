@@ -40,7 +40,7 @@ extensions = [
     "myst_parser",
     "sphinx_copybutton",
     "sphinx_design",
-    "sphinxcontrib.spelling",
+    #"sphinxcontrib.spelling",
     "sphinxcontrib.bibtex",
     "sphinx.ext.graphviz",
     "sphinx_proof"
