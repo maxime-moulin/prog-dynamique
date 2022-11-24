@@ -29,7 +29,7 @@ sudo apt update
 sudo apt-get install texlive-latex-extra texlive-lang-french texlive-fonts-recommended latexmk
 ```
 
-Sur les machines Windows, l'installation risque d'être plus compliquée, raison pour laquelle il est conseillé de compiler votre travail directement dans Cloud9 ou dans le Bash Ubuntu de Windows 10.
+Sur les machines Windows, l'installation risque d'être plus compliquée, raison pour laquelle il est conseillé de compiler votre travail directement dans gitpod ou dans le Bash Ubuntu de Windows 10.
 
 Ensuite, pour générer le PDF, il suffit de faire depuis la racine du dépôt où se trouve le fichier `Makefile` principal :
 
